@@ -1,8 +1,11 @@
-import torch.nn as nn
-import torch
 import json
+
+import torch
+import torch.nn as nn
+
 from .env import AttrDict
 from .models import Generator
+
 
 class Vocoder(nn.Module):
     def __init__(self, config_path, ckpt_path):
@@ -13,7 +16,7 @@ class Vocoder(nn.Module):
         json_config = json.loads(data)
         self.h = AttrDict(json_config)
         self.generator = Generator(self.h)
-        self.generator.load_state_dict(ckpt['generator'])
+        self.generator.load_state_dict(ckpt["generator"])
 
     def forward(self, x):
         return self.generator(x.transpose(1, 2))

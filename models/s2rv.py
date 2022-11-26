@@ -1,12 +1,14 @@
-import torch.nn as nn
-import torch
-import torch.nn.functional as F
-from transformers import Wav2Vec2Model
-from copy import deepcopy
-import torchaudio
 import random
+from copy import deepcopy
 
-class w2v2(nn.Module): #Small Wrapper
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torchaudio
+from transformers import Wav2Vec2Model
+
+
+class w2v2(nn.Module):  # Small Wrapper
     def __init__(self, m, spk_encoder, dur_encoder):
         super().__init__()
         self.feature_extractor = m.feature_extractor
@@ -16,16 +18,17 @@ class w2v2(nn.Module): #Small Wrapper
         self.dur_encoder = dur_encoder
         self._get_feature_vector_attention_mask = m._get_feature_vector_attention_mask
 
+
 class Speech2Vector(nn.Module):
     def __init__(self, hp):
         super().__init__()
         self.hp = hp
         model = self.get_model()
         spk_encoder = self.get_model().encoder
-        spk_encoder.layers = spk_encoder.layers[:hp.spk_layers]
+        spk_encoder.layers = spk_encoder.layers[: hp.spk_layers]
         dur_encoder = self.get_model().encoder
-        dur_encoder.layers = dur_encoder.layers[:hp.dur_layers]
-        model.encoder.layers = model.encoder.layers[:hp.s2rv_layers]
+        dur_encoder.layers = dur_encoder.layers[: hp.dur_layers]
+        model.encoder.layers = model.encoder.layers[: hp.s2rv_layers]
         self.wav2vec2 = w2v2(model, spk_encoder, dur_encoder)
         self.linear_spk = nn.Linear(model.config.hidden_size, self.hp.feature_size)
         self.linear_dur = nn.Linear(model.config.hidden_size, self.hp.feature_size)
@@ -33,7 +36,7 @@ class Speech2Vector(nn.Module):
 
     def get_model(self):
         model = Wav2Vec2Model.from_pretrained("facebook/wav2vec2-base")
-        #Simple trick to crop the layers for fine-tuning
+        # Simple trick to crop the layers for fine-tuning
         model.feature_extractor.gradient_checkpointing = False
         model.encoder.gradient_checkpointing = False
         model.feature_extractor._freeze_parameters()
@@ -41,7 +44,7 @@ class Speech2Vector(nn.Module):
         return model
 
     def process(self, x, mask, encoder, linear):
-        reps = encoder(x, attention_mask=mask)[0] #N, T, C
+        reps = encoder(x, attention_mask=mask)[0]  # N, T, C
         if mask is None:
             rep = reps.mean(1)
         else:

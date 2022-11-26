@@ -1,0 +1,6 @@
+.venv
+__pycache__
+*.ckpt
+cp_hifigan/
+samples/
+config.json

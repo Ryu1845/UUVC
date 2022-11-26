@@ -1,20 +1,21 @@
 import torch
 from torch import nn
 
+
 class GANLoss(nn.Module):
     def __init__(self, real, fake, gan_mode):
         super(GANLoss, self).__init__()
-        self.register_buffer('real_label', torch.tensor(real))
-        self.register_buffer('fake_label', torch.tensor(fake))
+        self.register_buffer("real_label", torch.tensor(real))
+        self.register_buffer("fake_label", torch.tensor(fake))
         self.gan_mode = gan_mode
-        if gan_mode == 'lsgan':
+        if gan_mode == "lsgan":
             self.loss = nn.MSELoss()
-        elif gan_mode == 'vanilla':
+        elif gan_mode == "vanilla":
             self.loss = nn.BCEWithLogitsLoss()
-        elif gan_mode in ['wgangp', 'hinge']:
+        elif gan_mode in ["wgangp", "hinge"]:
             self.loss = None
         else:
-            raise NotImplementedError('gan mode %s not implemented' % gan_mode)
+            raise NotImplementedError("gan mode %s not implemented" % gan_mode)
 
     def get_target_tensor(self, prediction, target_is_real):
         """Create label tensors with the same size as the input.
@@ -39,10 +40,10 @@ class GANLoss(nn.Module):
         Returns:
             the calculated loss.
         """
-        if self.gan_mode in ['lsgan', 'vanilla']:
+        if self.gan_mode in ["lsgan", "vanilla"]:
             target_tensor = self.get_target_tensor(prediction, target_is_real)
             loss = self.loss(prediction, target_tensor)
-        elif self.gan_mode == 'wgangp':
+        elif self.gan_mode == "wgangp":
             if target_is_real:
                 loss = -prediction.mean()
             else:

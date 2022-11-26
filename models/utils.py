@@ -1,13 +1,16 @@
-import torch.nn as nn
 import torch
+import torch.nn as nn
 import torch.nn.functional as F
+
 
 class ConvLNBlock(nn.Module):
     def __init__(self, hidden_size, dropout, dilation=1):
         super().__init__()
-        ks = 3 #Fix kernel size to 3
+        ks = 3  # Fix kernel size to 3
         padding = (ks - 1) // 2 * dilation
-        self.conv = nn.Conv1d(hidden_size, hidden_size, kernel_size=ks, padding=padding, dilation=dilation)
+        self.conv = nn.Conv1d(
+            hidden_size, hidden_size, kernel_size=ks, padding=padding, dilation=dilation
+        )
         self.dropout = nn.Dropout(p=dropout)
         self.ln = nn.LayerNorm(hidden_size)
         self.linear_conv = nn.Conv1d(hidden_size, hidden_size, kernel_size=1)
@@ -20,14 +23,19 @@ class ConvLNBlock(nn.Module):
         x = x.transpose(1, 2).contiguous()
         return x
 
+
 class ResBlock(nn.Module):
     def __init__(self, c_in, c_mid=128, c_out=128):
         super(ResBlock, self).__init__()
         self.leaky_relu1 = nn.LeakyReLU(negative_slope=0.1)
-        self.conv1 = nn.Conv1d(c_in, c_mid, kernel_size=3, stride=1, padding=(3 - 1) // 2 * 3, dilation=3)
+        self.conv1 = nn.Conv1d(
+            c_in, c_mid, kernel_size=3, stride=1, padding=(3 - 1) // 2 * 3, dilation=3
+        )
 
         self.leaky_relu2 = nn.LeakyReLU(negative_slope=0.1)
-        self.conv2 = nn.Conv1d(c_mid, c_out, kernel_size=3, stride=1, padding=(3 - 1) // 2 * 3, dilation=3)
+        self.conv2 = nn.Conv1d(
+            c_mid, c_out, kernel_size=3, stride=1, padding=(3 - 1) // 2 * 3, dilation=3
+        )
 
         self.conv3 = nn.Conv1d(c_in, c_out, kernel_size=1, dilation=1)
 
@@ -58,6 +66,7 @@ def pad(input_ele, mel_max_length=None):
     out_padded = torch.stack(out_list)
     return out_padded
 
+
 class LengthRegulator(nn.Module):
     def __init__(self):
         super(LengthRegulator, self).__init__()
@@ -75,7 +84,9 @@ class LengthRegulator(nn.Module):
         else:
             output = pad(output)
         mel_len = torch.LongTensor(mel_len).to(x.device)
-        mask = torch.arange(output.size(1), device=x.device)[None, :] >= mel_len[:, None]
+        mask = (
+            torch.arange(output.size(1), device=x.device)[None, :] >= mel_len[:, None]
+        )
 
         return output, mask
 
