@@ -1,6 +1,9 @@
 import torch
 import torch.nn as nn
-from transformers import Wav2Vec2Model
+from transformers import Wav2Vec2Model, logging
+
+# disables message about unused weights
+logging.set_verbosity_error()
 
 
 class w2v2(nn.Module):  # Small Wrapper
