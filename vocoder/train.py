@@ -1,11 +1,9 @@
-import warnings
-
-warnings.simplefilter(action="ignore", category=FutureWarning)
 import argparse
 import itertools
 import json
 import os
 import time
+import warnings
 
 import torch
 import torch.multiprocessing as mp
@@ -24,6 +22,7 @@ from models import (Generator, MultiPeriodDiscriminator,
                     generator_loss)
 
 torch.backends.cudnn.benchmark = True
+warnings.simplefilter(action="ignore", category=FutureWarning)
 
 
 def train(rank, a, h):
@@ -163,7 +162,7 @@ def train(rank, a, h):
         if h.num_gpus > 1:
             train_sampler.set_epoch(epoch)
 
-        for i, batch in enumerate(train_loader):
+        for batch in train_loader:
             if rank == 0:
                 start_b = time.time()
             x, y, _, y_mel = batch

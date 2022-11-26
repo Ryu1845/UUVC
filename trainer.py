@@ -1,16 +1,12 @@
-import os
 import random
 
-import librosa
-import numpy as np
 import pytorch_lightning.core.lightning as pl
-import soundfile as sf
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch.utils import data
-from torch_pitch_shift import *
+from torch_pitch_shift import get_fast_shifts, pitch_shift
 
 from data.dataset import SpeechDataset
 from data.sampler import RandomBucketSampler

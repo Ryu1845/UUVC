@@ -1,12 +1,10 @@
 import argparse
 import os
-import traceback
 from pathlib import Path
 
 import numpy as np
 import torchaudio
 from textless.data.speech_encoder import SpeechEncoder
-from torch.utils import data
 from tqdm import tqdm
 
 from data.dataset import mel_spectrogram
@@ -30,7 +28,7 @@ if args.with_pitch_unit:
         #        need_f0=False
     ).cuda()
 
-processed = [p.stem for p in Path(args.outdir).glob(f"*-unit.npy")]
+processed = [p.stem for p in Path(args.outdir).glob("*-unit.npy")]
 transforms_16k = {
     22050: torchaudio.transforms.Resample(22050, 16000).cuda(),
     24000: torchaudio.transforms.Resample(24000, 16000).cuda(),

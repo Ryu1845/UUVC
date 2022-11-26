@@ -156,7 +156,7 @@ class MelDataset(torch.utils.data.Dataset):
                 audio = audio / MAX_WAV_VALUE
                 if not self.fine_tuning:
                     audio = normalize(audio) * 0.95
-            except:
+            except Exception:
                 print(f"Error on audio: {filename}")
                 audio = np.random.normal(size=(160000,)) * 0.05
                 sampling_rate = self.sampling_rate

@@ -53,7 +53,6 @@ class EGenerator(nn.Module):
 
     def forward(self, x):
         # x: N, T, C
-        t = x.size(1)
         x = x.transpose(1, 2)
         for layer in self.layers1:
             x = layer(x)
@@ -114,7 +113,6 @@ class Discriminator(nn.Module):
         self.hp = hp
         c_in = hp.n_mels
         c_mid = 256
-        c_out = hp.hidden_size
 
         self.phi = nn.Sequential(
             nn.Conv1d(c_in, c_mid, kernel_size=3, stride=1, padding=1, dilation=1),

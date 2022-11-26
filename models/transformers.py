@@ -1,6 +1,3 @@
-import math
-
-import numpy as np
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -149,7 +146,7 @@ class TransformerEncoder(nn.Module):
     def forward(self, src, mask=None, attn_bias=None, src_key_padding_mask=None):
         output = src
         attns = []
-        for i, mod in enumerate(self.layers):
+        for mod in self.layers:
             output, attn = mod(
                 output,
                 src_mask=mask,

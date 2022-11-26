@@ -53,7 +53,7 @@ def pad(input_ele, mel_max_length=None):
         max_len = max([input_ele[i].size(0) for i in range(len(input_ele))])
 
     out_list = list()
-    for i, batch in enumerate(input_ele):
+    for batch in input_ele:
         if len(batch.shape) == 1:
             one_batch_padded = F.pad(
                 batch, (0, max_len - batch.size(0)), "constant", 0.0

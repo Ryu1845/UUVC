@@ -94,7 +94,7 @@ args = parser.parse_args()
 with open(os.path.join(args.saving_path, "config.json"), "w") as f:
     json.dump(args.__dict__, f, indent=2)
 
-fname_prefix = f""
+fname_prefix = ""
 
 if args.accelerator == "ddp":
     args.accelerator = DDPPlugin(find_unused_parameters=True)

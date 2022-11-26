@@ -1,15 +1,10 @@
-import json
 import os
-import random
-from pathlib import Path
 
 import numpy as np
-import soundfile as sf
 import torch
 import torch.nn.functional as F
 import torchaudio
 from librosa.filters import mel as librosa_mel_fn
-from librosa.util import normalize
 from torch.utils import data
 
 
@@ -103,8 +98,10 @@ class SpeechDataset(data.Dataset):
         self.E_bins = torch.arange(self.hp.E_bins, dtype=torch.float32) * bin_size
 
         # Print statistics:
-        l = len(self.data)
-        print(f"Total {l} examples, average length {np.mean(self.lengths)} seconds.")
+        length = len(self.data)
+        print(
+            f"Total {length} examples, average length {np.mean(self.lengths)} seconds."
+        )
 
     def load_dataset(self, metadata):
         units = []
@@ -130,7 +127,7 @@ class SpeechDataset(data.Dataset):
         }
         # Get the max length of everything
         m_a, m_u, m_m, m_d = 0, 0, 0, 0
-        for audio, unit, dedup_unit, duration, mel, _, _, _ in batch:
+        for audio, unit, dedup_unit, _duration, mel, _, _, _ in batch:
             if len(audio) > m_a:
                 m_a = len(audio)
             if len(unit) > m_u:
